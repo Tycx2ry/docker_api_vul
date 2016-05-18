@@ -1,9 +1,9 @@
 # docker_api_vul
 docker 未授权访问漏洞利用脚本
 
-##安装docker-py库
+##安装类库
 
-    pip install docker-py
+    pip install -r requirements.txt
 
 ##查看运行的容器
 
